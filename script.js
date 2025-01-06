@@ -1,4 +1,4 @@
-const API_KEY = "b7f0226506004c6d8a2ae00424eec811" 
+const API_KEY = "17e1cd39e78649d8bb80d61726be0840" 
 const url = "https://newsapi.org/v2/everything?q="
 const SENTIMENT_API_KEY = "844BE0BA-D7AB-46ED-B017-0A94CAB5A3B9"
 const LOCAL_STORAGE_KEYS = {
