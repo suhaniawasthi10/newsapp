@@ -31,9 +31,30 @@ function reload() {
 }
 
 async function fetchNews(query) {
-    const res = await fetch(`${url}${query}&apiKey=${API_KEY}`);
-    const data = await res.json();
-    bindData(data.articles);
+    try {
+        const res = await fetch(`${url}${query}&apiKey=${API_KEY}`);
+        
+        // Handle HTTP errors
+        if (!res.ok) {
+            console.error(`API request failed with status: ${res.status}`);
+            showToast(`Failed to fetch news. Please try again later.`);
+            return;
+        }
+
+        const data = await res.json();
+
+        // Check if data and articles exist
+        if (!data || !data.articles || !Array.isArray(data.articles)) {
+            console.error("Invalid API response structure:", data);
+            showToast("No articles found. Please refine your search.");
+            return;
+        }
+
+        bindData(data.articles);
+    } catch (error) {
+        console.error("Error fetching news:", error);
+        showToast("An error occurred while fetching news. Please try again.");
+    }
 }
 
 function bindData(articles) {
@@ -41,6 +62,17 @@ function bindData(articles) {
     const newsCardTemplate = document.getElementById("template-news-card");
 
     cardsContainer.innerHTML = "";
+
+    // Ensure articles is an array before proceeding
+    if (!Array.isArray(articles) || articles.length === 0) {
+        cardsContainer.innerHTML = `
+            <div class="no-news-message">
+                <h2>No articles found</h2>
+                <p>Try searching for something else</p>
+            </div>
+        `;
+        return;
+    }
 
     articles.forEach((article) => {
         if (!article.urlToImage) return;
